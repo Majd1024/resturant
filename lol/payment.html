@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Styles remain the same as before */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    .payment-method {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .payment-method button {
+      flex: 1;
+      margin: 0 5px;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: #007bff;
+      color: white;
+    }
+    .payment-method button.selected {
+      background-color: #0056b3;
+    }
+    .form-section {
+      display: none;
+    }
+    .form-section.active {
+      display: block;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .form-group .forgot-password {
+      display: block;
+      margin-top: 5px;
+      font-size: 14px;
+      color: #007bff;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .form-group .forgot-password:hover {
+      text-decoration: underline;
+    }
+    .submit-btn {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      background-color: #28a745;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .submit-btn:hover {
+      background-color: #218838;
+    }
+    .confirmation {
+      display: none;
+      text-align: center;
+      margin-top: 20px;
+      font-size: 18px;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Complete Your Payment</h1>
+    <div class="payment-method">
+      <button id="paypal-btn">PayPal</button>
+      <button id="card-btn">Card</button>
+    </div>
+    
+    <!-- PayPal Form -->
+    <div id="paypal-form" class="form-section">
+      <h2>Pay with PayPal</h2>
+      <p>Please enter your PayPal login credentials.</p>
+      <div class="form-group">
+        <label for="paypal-email">PayPal Email</label>
+        <input type="email" id="paypal-email" placeholder="Enter your PayPal email">
+      </div>
+      <div class="form-group">
+        <label for="paypal-password">Password</label>
+        <input type="password" id="paypal-password" placeholder="Enter your PayPal password">
+        <a href="#" class="forgot-password">Forgot Password?</a>
+      </div>
+    </div>
+    
+    <!-- Card Form -->
+    <div id="card-form" class="form-section">
+      <h2>Pay with Card</h2>
+      <p>Please enter your card details to proceed.</p>
+      <div class="form-group">
+        <label for="card-number">Card Number</label>
+        <input type="text" id="card-number" placeholder="Enter your card number">
+      </div>
+      <div class="form-group">
+        <label for="card-expiry">Expiry Date</label>
+        <input type="text" id="card-expiry" placeholder="MM/YY">
+      </div>
+      <div class="form-group">
+        <label for="card-cvc">CVC</label>
+        <input type="text" id="card-cvc" placeholder="CVC">
+      </div>
+    </div>
+    
+    <button class="submit-btn">Submit Payment</button>
+
+    <!-- Confirmation Message -->
+    <div id="confirmation-message" class="confirmation"></div>
+  </div>
+  
+  <script>
+    const paypalBtn = document.getElementById('paypal-btn');
+    const cardBtn = document.getElementById('card-btn');
+    const paypalForm = document.getElementById('paypal-form');
+    const cardForm = document.getElementById('card-form');
+    const submitBtn = document.querySelector('.submit-btn');
+    const confirmationMessage = document.getElementById('confirmation-message');
+
+    const paymentAmount = 100; // Example: Set the amount dynamically as needed
+
+    // Toggle between payment methods
+    paypalBtn.addEventListener('click', () => {
+      paypalForm.classList.add('active');
+      cardForm.classList.remove('active');
+      paypalBtn.classList.add('selected');
+      cardBtn.classList.remove('selected');
+    });
+
+    cardBtn.addEventListener('click', () => {
+      cardForm.classList.add('active');
+      paypalForm.classList.remove('active');
+      cardBtn.classList.add('selected');
+      paypalBtn.classList.remove('selected');
+    });
+
+    // Handle form submission
+    submitBtn.addEventListener('click', () => {
+      if (paypalForm.classList.contains('active')) {
+        const paypalEmail = document.getElementById('paypal-email').value;
+        const paypalPassword = document.getElementById('paypal-password').value;
+
+        if (!paypalEmail || !paypalPassword) {
+          alert('Please enter your PayPal email and password.');
+          return;
+        }
+        confirmationMessage.textContent = `You have paid $${paymentAmount} using PayPal.`;
+      } else if (cardForm.classList.contains('active')) {
+        const cardNumber = document.getElementById('card-number').value;
+        const cardExpiry = document.getElementById('card-expiry').value;
+        const cardCvc = document.getElementById('card-cvc').value;
+
+        if (!cardNumber || !cardExpiry || !cardCvc) {
+          alert('Please fill in all card details.');
+          return;
+        }
+        confirmationMessage.textContent = `You have paid $${paymentAmount} using your card.`;
+      } else {
+        alert('Please select a payment method.');
+        return;
+      }
+
+      // Display the confirmation message
+      confirmationMessage.style.display = 'block';
+
+      // Optionally, clear the forms
+      paypalForm.reset();
+      cardForm.reset();
+    });
+  </script>
+</body>
+</html>
